@@ -38,7 +38,7 @@ public class Station3Client {
 
     private void addAnimalPartToHalfAnimal(int halfAnimalRegNo, int animalPartRegNo)
     {
-        rest.put(ROOT + "package/" + animalPartRegNo, halfAnimalRegNo);
+        rest.put(ROOT + "halfanimal/" + animalPartRegNo, halfAnimalRegNo);
     }
 
     public static void main( String[] args )
@@ -49,12 +49,12 @@ public class Station3Client {
 
     private void run()
     {
-        PackageCreationDto dto = new PackageCreationDto("leg", 10);
+        /*PackageCreationDto dto = new PackageCreationDto("leg", 10);
         System.out.println(addPackage(dto));
 
-        addAnimalPartToPackage(1, 1);
+        addAnimalPartToPackage(1, 1);*/
 
-        System.out.println(addHalfAnimal());
+        //System.out.println(addHalfAnimal());
 
         addAnimalPartToHalfAnimal(2,1);
     }

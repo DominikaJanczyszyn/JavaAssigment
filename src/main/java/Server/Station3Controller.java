@@ -37,8 +37,8 @@ public class Station3Controller
         return ResponseEntity.status(HttpStatus.CREATED).body("Package has been created.");
     }
 
-    @PutMapping("/package/{animalRegNo}")
-    public synchronized ResponseEntity<String> addAnimalPartToPackage(@RequestBody int packageRegNo ,@PathVariable(value = "animalRegNo") int animalPartRegNo){
+    @PutMapping("/package/{animalPartRegNo}")
+    public synchronized ResponseEntity<String> addAnimalPartToPackage(@RequestBody int packageRegNo ,@PathVariable(value = "animalPartRegNo") int animalPartRegNo){
         try{
             productLogic.addAnimalPartToPackage(packageRegNo, animalPartRegNo);
         }catch (Exception e){
@@ -58,13 +58,15 @@ public class Station3Controller
         return ResponseEntity.status(HttpStatus.CREATED).body("Half Animal has been created.");
     }
 
-    @PutMapping("/halfanimal/{animalRegNo}")
-    public synchronized ResponseEntity<String> addAnimalPartToHalfAnimal(@RequestBody int halfAnimalRegNo ,@PathVariable int animalPartRegNo){
-        try{
+    @PutMapping("/halfanimal/{animalPartRegNo}")
+    public synchronized ResponseEntity<String> addAnimalPartToHalfAnimal(@RequestBody int halfAnimalRegNo ,@PathVariable(value = "animalPartRegNo") int animalPartRegNo){
+        try
+        {
             productLogic.addAnimalPartToHalfAnimal(halfAnimalRegNo, animalPartRegNo);
-        }catch (Exception e){
+        }
+        catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Animal part added to the half animal");
+        return ResponseEntity.status(HttpStatus.OK).body("Animal part added to the half animal.");
     }
 }

@@ -77,7 +77,7 @@ public class ProductLogic implements IProductLogic{
         HalfAnimal halfAnimal = productDao.getHalfAnimalByRegNo(halfAnimalRegNo);
         AnimalPart animalPart = animalPartDao.getAnimalPartByRegNo(animalPartRegNo);
 
-        if (!halfAnimal.ifContainsPart(animalPart.getPartType()))
+        if (halfAnimal.ifContainsPart(animalPart.getPartType()))
             throw new Exception("The type of the animal part is already in the half animal package.");
 
         try
