@@ -1,10 +1,13 @@
 package Dao;
 
+import Domain.Animal;
 import Domain.HalfAnimal;
 import Domain.Package;
+import Domain.Product;
 import Dto.PackageCreationDto;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class ProductDao implements IProductDao{
     private static ProductDao instance;
@@ -101,6 +104,52 @@ public class ProductDao implements IProductDao{
                 halfAnimal = new HalfAnimal(reg_no);
             }
             return halfAnimal;
+        }
+    }
+
+    @Override
+    public ArrayList<Animal> getAnimalsByProductRegNo(int productRegNo) throws SQLException {
+        try (Connection connection = getConnection()){
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Animal JOIN AnimalPart On Animal.reg_no = AnimalPart.animal_reg_no WHERE product_reg_no = ?;");
+            statement.setInt(1, productRegNo);
+            ResultSet resultSet = statement.executeQuery();
+            ArrayList<Animal> animals = new ArrayList<>();
+
+            while(resultSet.next()){
+                String species = resultSet.getString("species");
+                double weight = resultSet.getDouble("animal.weight");
+                int regNo = resultSet.getInt("animal.reg_no");
+                Animal animal = new Animal(species, weight, regNo);
+                animals.add(animal);
+            }
+            return animals;
+        }
+    }
+
+    @Override
+    public ArrayList<Product> getProductsByAnimalRegNo(int animalRegNo) throws SQLException {
+        try (Connection connection = getConnection())
+        {
+            ArrayList<Product> products = new ArrayList<>();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Package JOIN Product ON package.reg_no = product.reg_no JOIN AnimalPart ON product.reg_no = animalpart.product_reg_no WHERE animalPart.reg_no = ?;");
+            statement.setInt(1, animalRegNo);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next())
+            {
+                int regNo = resultSet.getInt("package.reg_no");
+                Package p = getPackageByRegNo(regNo);
+                products.add(p);
+            }
+            PreparedStatement statement1 = connection.prepareStatement("SELECT * FROM HalfAnimal JOIN Product ON halfanimal.reg_no = product.reg_no JOIN AnimalPart ON product.reg_no = animalpart.product_reg_no WHERE animalPart.reg_no = ?;");
+            statement1.setInt(1, animalRegNo);
+            ResultSet resultSet1 = statement1.executeQuery();
+            while (resultSet1.next())
+            {
+                int regNo = resultSet1.getInt("halfanimal.reg_no");
+                HalfAnimal halfAnimal = getHalfAnimalByRegNo(regNo);
+                products.add(halfAnimal);
+            }
+            return products;
         }
     }
 }

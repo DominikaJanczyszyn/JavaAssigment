@@ -1,4 +1,4 @@
-package Server;
+package WebAPI;
 
 import Dao.AnimalDao;
 import Dto.AnimalCreationDTO;

@@ -6,7 +6,6 @@ public class Package {
     private int regNo;
     private String animalPartType;
     private int maxNrOfParts;
-    private ArrayList<AnimalPart> parts;
 
     public Package(int regNo ,String animalPartType, int maxNrOfParts) {
         this.regNo = regNo;
@@ -21,8 +20,6 @@ public class Package {
             parts.add(animalPart);
         throw new Exception("Maximum number of parts is the package reached.");
     }
-
-    public int getRegNo() {return regNo;}
 
     public String getAnimalPartType() {
         return animalPartType;

@@ -1,9 +1,7 @@
-package Server;
+package WebAPI;
 
-import Dao.AnimalDao;
 import Dao.AnimalPartDao;
 import Dao.TrayDao;
-import Domain.Tray;
 import Dto.AnimalPartCreationDTO;
 import Dto.TrayCreationDto;
 import Logic.*;
