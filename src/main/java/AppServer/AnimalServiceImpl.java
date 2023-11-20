@@ -26,7 +26,7 @@ public class AnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBase {
         AnimalCreationDTO dto = new AnimalCreationDTO(species, weight);
         try {
             dao.addAnimal(dto);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL.withDescription(e.getMessage()).withCause(new RuntimeException(e.getCause())).asRuntimeException());
         }
         EmptyResponse response = EmptyResponse.newBuilder().build();

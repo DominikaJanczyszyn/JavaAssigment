@@ -2,6 +2,7 @@ package WebAPI;
 
 import Dao.AnimalPartDao;
 import Dao.TrayDao;
+import Domain.AnimalPart;
 import Dto.AnimalPartCreationDTO;
 import Dto.TrayCreationDto;
 import Logic.*;
@@ -19,8 +20,8 @@ public class Station2Controller {
 
     public Station2Controller(){
         try {
-            this.animalPartLogic = new AnimalPartLogic(AnimalPartDao.getInstance());
-            this.trayLogic = new TrayLogic(TrayDao.getInstance(), AnimalPartDao.getInstance());
+            this.animalPartLogic = new AnimalPartLogic();
+            this.trayLogic = new TrayLogic();
             this.gson= new Gson();
         }catch (Exception e){
             System.out.println("Initialization error.");
@@ -42,6 +43,24 @@ public class Station2Controller {
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(dto));
+    }
+
+    @GetMapping("/animalpart/{animalPartRegNo}")
+    public synchronized ResponseEntity<String> getAnimalPartByRegNo( @PathVariable(value = "animalPartRegNo") int animalPartRegNo )
+    {
+        AnimalPart animalPart;
+        try
+        {
+            animalPart = animalPartLogic.getAnimalPartByRegNo(animalPartRegNo);
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+        if( animalPart == null )
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Animal part not found.");
+        else
+            return ResponseEntity.status(HttpStatus.FOUND).body(gson.toJson(animalPart));
     }
 
     @PostMapping("/tray/{type}")

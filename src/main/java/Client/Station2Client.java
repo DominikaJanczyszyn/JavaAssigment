@@ -1,5 +1,6 @@
 package Client;
 
+import Domain.AnimalPart;
 import Domain.Tray;
 import Dto.AnimalPartCreationDTO;
 import Dto.TrayCreationDto;
@@ -26,6 +27,12 @@ public class Station2Client {
         return response.getBody();
     }
 
+    private String getAnimalPartByRegNo(int animalPartRegNo)
+    {
+        ResponseEntity<String> response = rest.getForEntity(ROOT + "animalpart/" + animalPartRegNo, String.class);
+        return response.getBody();
+    }
+
     private String addTray(TrayCreationDto dto)
     {
         ResponseEntity<String> response = rest.postForEntity(ROOT + "tray/" + dto.getPartType(), gson.toJson(dto) , String.class);
@@ -45,8 +52,9 @@ public class Station2Client {
 
     private void run()
     {
-        addAnimalPart(new AnimalPartCreationDTO(1, 200, "leg"));
+        System.out.println(gson.fromJson(getAnimalPartByRegNo(1), AnimalPart.class));
+        /*addAnimalPart(new AnimalPartCreationDTO(1, 200, "leg"));
         addTray(new TrayCreationDto(200, "leg"));
-        addAnimalPartToTray(1, 1);
+        addAnimalPartToTray(1, 1);*/
     }
 }

@@ -1,14 +1,24 @@
 package Logic;
 
 import Dao.IAnimalPartDao;
+import Domain.Animal;
 import Domain.AnimalPart;
 import Dto.AnimalPartCreationDTO;
+import animal.AddAnimalRequest;
+import animal.AnimalServiceGrpc;
+import animalPart.AddAnimalPartRequest;
+import animalPart.AnimalPartResponse;
+import animalPart.AnimalPartServiceGrpc;
+import animalPart.GetAnimalPartByRegNoRequest;
+import com.google.gson.Gson;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 
 public class AnimalPartLogic implements IAnimalPartLogic {
-    private IAnimalPartDao dao;
+    private final Gson gson;
 
-    public AnimalPartLogic(IAnimalPartDao dao) {
-        this.dao = dao;
+    public AnimalPartLogic() {
+        this.gson = new Gson();
     }
 
     @Override
@@ -17,12 +27,19 @@ public class AnimalPartLogic implements IAnimalPartLogic {
             throw new Exception("Animal Registration Number has to be declared.");
         if(dto.getPartWeight() <= 0)
             throw new Exception("Weight has to be a positive number.");
-        if(dto.getPartType() == null || dto.getPartType().equals(""))
+        if(dto.getPartType() == null || dto.getPartType().isEmpty())
             throw new Exception("Part type has to be declared.");
 
         try
         {
-            dao.addAnimalPart(dto);
+            ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8081)
+                .usePlaintext()
+                .build();
+
+            AnimalPartServiceGrpc.AnimalPartServiceBlockingStub stub;
+            stub = AnimalPartServiceGrpc.newBlockingStub(channel);
+            stub.addAnimalPart(AddAnimalPartRequest.newBuilder().setAnimalRegNo(dto.getAnimalRegNo()).setPartWeight(dto.getPartWeight()).setPartType(dto.getPartType()).build());
+            channel.shutdown();
         }
         catch (Exception e)
         {
@@ -33,9 +50,23 @@ public class AnimalPartLogic implements IAnimalPartLogic {
     @Override
     public AnimalPart getAnimalPartByRegNo(int regNo) throws Exception {
         if(regNo <= 0) throw new Exception("Registration number has to be a positive number.");
-        try{
-            return dao.getAnimalPartByRegNo(regNo);
-        }catch (Exception e){
+        try
+        {
+            ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8081)
+                .usePlaintext()
+                .build();
+
+            AnimalPartServiceGrpc.AnimalPartServiceBlockingStub stub;
+            stub = AnimalPartServiceGrpc.newBlockingStub(channel);
+            AnimalPartResponse response = stub.getAnimalPartByRegNo(GetAnimalPartByRegNoRequest.newBuilder().setRegNo(regNo).build());
+            channel.shutdown();
+
+            Animal animal = gson.fromJson(response.getAnimal(), Animal.class);
+            AnimalPart animalPart = new AnimalPart(animal, response.getPartWeight(), response.getPartRegNo(), response.getPartType());
+            return animalPart;
+        }
+        catch (Exception e)
+        {
             throw new Exception(e.getMessage());
         }
     }
