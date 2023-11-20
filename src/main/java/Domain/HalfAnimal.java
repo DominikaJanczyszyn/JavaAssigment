@@ -1,20 +1,15 @@
 package Domain;
 
-import java.util.ArrayList;
 
-public class HalfAnimal {
-    private int regNo;
-    private ArrayList<AnimalPart> parts;
-
+public class HalfAnimal extends Product {
     public HalfAnimal(int regNo) {
-        this.regNo = regNo;
-        this.parts = new ArrayList<>();
+        super(regNo);
     }
 
     public boolean ifContainsPart(String type)
     {
-        for (int i = 0; i < parts.size(); i++) {
-            if(parts.get(i).getPartType().equals(type))
+        for (int i = 0; i < getParts().size(); i++) {
+            if(getParts().get(i).getPartType().equals(type))
                 return true;
         }
         return false;
