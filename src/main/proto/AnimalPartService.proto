@@ -1,0 +1,31 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package animalPart;
+
+message AddAnimalPartRequest
+{
+  int32 animalRegNo = 1;
+  double partWeight = 2;
+  string partType = 3;
+}
+
+message GetAnimalPartByRegNoRequest
+{
+  int32 regNo = 1;
+}
+
+message EmptyResponse {}
+
+message AnimalPartResponse
+{
+  string animal = 1;
+  double partWeight = 2;
+  int32 partRegNo = 3;
+  string partType = 4;
+}
+
+service AnimalPartService
+{
+  rpc addAnimalPart(AddAnimalPartRequest) returns (EmptyResponse);
+  rpc getAnimalPartByRegNo(GetAnimalPartByRegNoRequest) returns (AnimalPartResponse);
+}
