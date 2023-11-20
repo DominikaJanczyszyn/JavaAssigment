@@ -1,0 +1,21 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package tray;
+
+message AddTrayRequest
+{
+ double weightCapacity = 1;
+ string partType = 2;
+}
+message AddAnimalPartToTrayRequest{
+  int32 trayId = 1;
+  int32 animalPartRegNo = 2;
+}
+
+message EmptyResponse {}
+
+service TrayService
+{
+  rpc addTray(AddTrayRequest) returns (EmptyResponse);
+  rpc addAnimalPartToTray(AddAnimalPartToTrayRequest) returns (EmptyResponse);
+}

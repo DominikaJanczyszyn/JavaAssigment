@@ -1,0 +1,32 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package product;
+
+message AddPackageRequest
+{
+  string animalPartType =1;
+  int32 maxNrOfParts =2;
+}
+
+message AddAnimalPartToPackageRequest{
+  int32 packageRegNo = 1;
+  int32 animalPartRegNo =2;
+}
+
+message AddHalfAnimalRequest {}
+
+message AddAnimalPartToHalfAnimalRequest
+{
+  int32 halfAnimalRegNo = 1;
+  int32 animalPartRegNo = 2;
+}
+
+message EmptyResponse {}
+
+service ProductService
+{
+  rpc addPackage(AddPackageRequest) returns (EmptyResponse);
+  rpc addAnimalPartToPackage(AddAnimalPartToPackageRequest) returns (EmptyResponse);
+  rpc addHalfAnimal(AddHalfAnimalRequest) returns (EmptyResponse);
+  rpc addAnimalPartToHalfAnimal(AddAnimalPartToHalfAnimalRequest) returns (EmptyResponse);
+}

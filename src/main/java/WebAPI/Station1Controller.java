@@ -18,7 +18,7 @@ public class Station1Controller{
 
     public Station1Controller(){
         try {
-            this.animalLogic = new AnimalLogic(AnimalDao.getInstance());
+            this.animalLogic = new AnimalLogic();
             this.gson= new Gson();
         }catch (Exception e){
             System.out.println("Initialization error.");
