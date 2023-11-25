@@ -7,18 +7,42 @@ message AddPackageRequest
   string animalPartType =1;
   int32 maxNrOfParts =2;
 }
-
+message GetPackageByRegNoRequest{
+  int32 regNo = 1;
+}
 message AddAnimalPartToPackageRequest{
   int32 packageRegNo = 1;
   int32 animalPartRegNo =2;
 }
-
 message AddHalfAnimalRequest {}
-
-message AddAnimalPartToHalfAnimalRequest
+message GetHalfAnimalByRegNoRequest{
+  int32 regNo = 1;
+}message AddAnimalPartToHalfAnimalRequest
 {
   int32 halfAnimalRegNo = 1;
   int32 animalPartRegNo = 2;
+}
+message GetAnimalsByProductRegNoRequest{
+  int32 regNo =1;
+}
+message GetProductsByAnimalRegNo{
+  int32 regNo = 1;
+}
+
+
+message PackageResponse{
+  string animalPartType = 1;
+  int32 maxNrOfParts =2;
+  int32 regNo =3 ;
+}
+message HalfAnimalResponse{
+  int32 regNo =1;
+}
+message AnimalsResponse{
+  string animalList = 1;
+}
+message ProductResponse{
+  string productList =1;
 }
 
 message EmptyResponse {}
@@ -29,4 +53,8 @@ service ProductService
   rpc addAnimalPartToPackage(AddAnimalPartToPackageRequest) returns (EmptyResponse);
   rpc addHalfAnimal(AddHalfAnimalRequest) returns (EmptyResponse);
   rpc addAnimalPartToHalfAnimal(AddAnimalPartToHalfAnimalRequest) returns (EmptyResponse);
+  rpc getPackageByRegNo(GetPackageByRegNoRequest) returns (PackageResponse);
+  rpc getHalfAnimalByRegNo(GetHalfAnimalByRegNoRequest) returns (HalfAnimalResponse);
+  rpc getAnimalsByProductRegNo(GetAnimalsByProductRegNoRequest) returns (AnimalsResponse);
+  rpc getProductsByAnimalRegNo(GetProductsByAnimalRegNo) returns (ProductResponse);
 }

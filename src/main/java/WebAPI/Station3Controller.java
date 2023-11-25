@@ -18,7 +18,7 @@ public class Station3Controller
 
     public Station3Controller(){
         try {
-            this.productLogic = new ProductLogic(ProductDao.getInstance(), AnimalPartDao.getInstance());
+            this.productLogic = new ProductLogic();
             this.gson= new Gson();
         }catch (Exception e){
             System.out.println("Initialization error.");
