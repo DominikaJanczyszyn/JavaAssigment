@@ -1,5 +1,7 @@
 package Domain;
 
+import java.io.Serializable;
+
 public class AnimalPart {
     private Animal animal;
     private double partWeight;

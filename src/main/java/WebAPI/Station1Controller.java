@@ -1,6 +1,5 @@
 package WebAPI;
 
-import Dao.AnimalDao;
 import Dto.AnimalCreationDTO;
 import Logic.AnimalLogic;
 import Logic.IAnimalLogic;
@@ -8,7 +7,6 @@ import com.google.gson.Gson;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @ResponseBody
 public class Station1Controller{

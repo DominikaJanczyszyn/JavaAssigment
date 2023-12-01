@@ -1,7 +1,5 @@
 package WebAPI;
 
-import Dao.AnimalPartDao;
-import Dao.TrayDao;
 import Domain.AnimalPart;
 import Dto.AnimalPartCreationDTO;
 import Dto.TrayCreationDto;

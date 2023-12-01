@@ -1,7 +1,5 @@
 package WebAPI;
 
-import Dao.AnimalPartDao;
-import Dao.ProductDao;
 import Dto.PackageCreationDto;
 import com.google.gson.Gson;
 import org.springframework.http.HttpStatus;

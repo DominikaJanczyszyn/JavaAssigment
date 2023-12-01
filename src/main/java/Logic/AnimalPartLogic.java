@@ -1,6 +1,5 @@
 package Logic;
-
-import Dao.IAnimalPartDao;
+import com.google.gson.reflect.TypeToken;
 import Domain.Animal;
 import Domain.AnimalPart;
 import Dto.AnimalPartCreationDTO;
@@ -11,14 +10,31 @@ import animalPart.AnimalPartResponse;
 import animalPart.AnimalPartServiceGrpc;
 import animalPart.GetAnimalPartByRegNoRequest;
 import com.google.gson.Gson;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DeliverCallback;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
+
+import java.util.ArrayList;
 
 public class AnimalPartLogic implements IAnimalPartLogic {
+    private static final String QUEUE = "AnimalPartQueue";
+    private static final String ANIMAL_PART = "AnimalPart";
+    private ArrayList<AnimalPart> animalParts;
+
     private final Gson gson;
 
     public AnimalPartLogic() {
         this.gson = new Gson();
+        this.animalParts = new ArrayList<>();
+        try {
+            run();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -43,6 +59,7 @@ public class AnimalPartLogic implements IAnimalPartLogic {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
@@ -82,7 +99,27 @@ public class AnimalPartLogic implements IAnimalPartLogic {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
+    }
+
+    private synchronized void run() throws Exception {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        Connection connection = factory.newConnection();
+        Channel channel = connection.createChannel();
+
+        channel.exchangeDeclare(QUEUE, "topic");
+        String queueName = channel.queueDeclare().getQueue();
+
+        channel.queueBind(queueName, QUEUE, ANIMAL_PART);
+
+        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+            String message = new String(delivery.getBody(), "UTF-8");
+            TypeToken<ArrayList<AnimalPart>> typeToken = new TypeToken<ArrayList<AnimalPart>>() {};
+            this.animalParts = gson.fromJson(message, typeToken.getType());
+        };
+        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
     }
 }

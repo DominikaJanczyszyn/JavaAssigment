@@ -5,8 +5,14 @@ import Dto.AnimalCreationDTO;
 import animal.AddAnimalRequest;
 import animal.AnimalServiceGrpc;
 import animal.EmptyResponse;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DeliverCallback;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+
+import java.util.ArrayList;
 
 public class AnimalLogic implements IAnimalLogic {
     public AnimalLogic(){}
@@ -30,7 +36,10 @@ public class AnimalLogic implements IAnimalLogic {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
            throw new Exception(e.getMessage());
         }
     }
+
+
 }

@@ -52,7 +52,7 @@ public class Station3Client {
         //PackageCreationDto dto = new PackageCreationDto("leg", 10);
         //System.out.println(addPackage(dto));
 
-        addAnimalPartToPackage(1, 1);*/
+        //addAnimalPartToPackage(1, 1);
 
        // System.out.println(addHalfAnimal());
 

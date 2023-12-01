@@ -1,24 +1,45 @@
 package Logic;
 
-import Dao.IAnimalPartDao;
-import Dao.IProductDao;
 import Domain.*;
 import Domain.Package;
 import Dto.PackageCreationDto;
-import animal.AnimalServiceGrpc;
 import animalPart.AnimalPartResponse;
 import animalPart.AnimalPartServiceGrpc;
 import animalPart.GetAnimalPartByRegNoRequest;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DeliverCallback;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import org.checkerframework.checker.units.qual.A;
+import org.postgresql.shaded.com.ongres.scram.common.bouncycastle.pbkdf2.Pack;
 import product.*;
-import tray.AddTrayRequest;
-import tray.TrayServiceGrpc;
 import java.util.ArrayList;
 
 public class ProductLogic implements IProductLogic{
+    private static final String QUEUE1 = "HalfAnimalQueue";
+    private static final String QUEUE2 = "PackageQueue";
+    private static final String HALF_ANIMAL = "HalfAnimal";
+    private static final String PACKAGE = "Package";
+
+    private final Gson gson;
+
+    private ArrayList<HalfAnimal> halfAnimals;
+    private ArrayList<Package> packages;
+
+    public ProductLogic()
+    {
+        this.gson = new Gson();
+        this.halfAnimals = new ArrayList<>();
+        this.packages = new ArrayList<>();
+        try {
+            run();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void addPackage(PackageCreationDto dto) throws Exception {
@@ -38,6 +59,7 @@ public class ProductLogic implements IProductLogic{
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
@@ -70,6 +92,7 @@ public class ProductLogic implements IProductLogic{
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
@@ -86,6 +109,7 @@ public class ProductLogic implements IProductLogic{
             channel.shutdown();
         } catch (Exception e)
         {
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
@@ -117,6 +141,7 @@ public class ProductLogic implements IProductLogic{
             channel.shutdown();
         }catch (Exception e)
         {
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
@@ -140,6 +165,7 @@ public class ProductLogic implements IProductLogic{
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
@@ -163,6 +189,7 @@ public class ProductLogic implements IProductLogic{
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
@@ -187,6 +214,7 @@ public class ProductLogic implements IProductLogic{
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
@@ -211,7 +239,41 @@ public class ProductLogic implements IProductLogic{
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
+    }
+
+    private synchronized void run() throws Exception {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        Connection connection1 = factory.newConnection();
+        Channel channel1 = connection1.createChannel();
+        Connection connection2 = factory.newConnection();
+        Channel channel2 = connection2.createChannel();
+
+        channel1.exchangeDeclare(QUEUE1, "topic");
+        channel2.exchangeDeclare(QUEUE2, "topic");
+        String queueName1 = channel1.queueDeclare().getQueue();
+        String queueName2 = channel2.queueDeclare().getQueue();
+
+        channel1.queueBind(queueName1, QUEUE1, HALF_ANIMAL);
+        channel2.queueBind(queueName2, QUEUE2, PACKAGE);
+
+        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+            String message = new String(delivery.getBody(), "UTF-8");
+            if (message.contains("HalfAnimal"))
+            {
+                TypeToken<ArrayList<HalfAnimal>> typeToken = new TypeToken<ArrayList<HalfAnimal>>() {};
+                this.halfAnimals = gson.fromJson(message, typeToken.getType());
+            }
+            else
+            {
+                TypeToken<ArrayList<Package>> typeToken = new TypeToken<ArrayList<Package>>() {};
+                this.packages = gson.fromJson(message, typeToken.getType());
+            }
+        };
+        channel1.basicConsume(queueName1, true, deliverCallback, consumerTag -> { });
+        channel2.basicConsume(queueName2, true, deliverCallback, consumerTag -> { });
     }
 }
