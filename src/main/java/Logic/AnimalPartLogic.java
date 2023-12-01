@@ -65,6 +65,21 @@ public class AnimalPartLogic implements IAnimalPartLogic {
             AnimalPart animalPart = new AnimalPart(animal, response.getPartWeight(), response.getPartRegNo(), response.getPartType());
             return animalPart;
         }
+        catch (StatusRuntimeException ex)
+        {
+            try{
+                for (AnimalPart animalPart : animalParts) {
+                    if (animalPart.getPartRegNo() == regNo) {
+                        System.out.println(animalPart);
+                        return animalPart;
+                    }
+                }
+                return null;
+            }
+            catch (Exception exception){
+                throw new Exception(exception.getMessage());
+            }
+        }
         catch (Exception e)
         {
             throw new Exception(e.getMessage());

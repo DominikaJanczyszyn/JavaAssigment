@@ -52,9 +52,6 @@ public class Station2Client {
 
     private void run()
     {
-        System.out.println(gson.fromJson(getAnimalPartByRegNo(1), AnimalPart.class));
-        /*addAnimalPart(new AnimalPartCreationDTO(1, 200, "leg"));
-        addTray(new TrayCreationDto(200, "leg"));
-        addAnimalPartToTray(1, 1);*/
+        System.out.println(getAnimalPartByRegNo(1));
     }
 }

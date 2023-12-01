@@ -22,7 +22,7 @@ public class TrayDao implements ITrayDao{
     }
     private Connection getConnection() throws SQLException
     {
-        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhouse", "postgres", "xf31bhl9");
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhouse", "postgres", "sql3486");
     }
     @Override
     public void addTray(TrayCreationDto dto) throws SQLException {
@@ -75,6 +75,40 @@ public class TrayDao implements ITrayDao{
             statement.setInt(1, trayId);
             statement.setInt(2, animalPartRegNo);
             statement.executeUpdate();
+        }
+    }
+
+    @Override
+    public ArrayList<Tray> getAllTrays() throws SQLException {
+        try(Connection connection = getConnection()){
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Tray");
+            ResultSet resultSet = statement.executeQuery();
+            ArrayList<Tray> trays = new ArrayList<>();
+            Tray tray = null;
+            if(resultSet.next()){
+                int trayId = resultSet.getInt("reg_no");
+                double weightCapacity = resultSet.getDouble("weight_capacity");
+                String partsType = resultSet.getString("part_type");
+                tray = new Tray(trayId, weightCapacity, partsType);
+
+                PreparedStatement statement1 = connection.prepareStatement("SELECT * FROM AnimalPart join Animal on AnimalPart.animal_reg_no = Animal.reg_no where AnimalPart.tray_reg_no = ?;");
+                statement1.setInt(1, trayId);
+                ResultSet resultSet1 = statement1.executeQuery();
+                ArrayList<AnimalPart> parts = new ArrayList<>();
+                while(resultSet1.next()){
+                    String species = resultSet1.getString(8);
+                    double animalWeight = resultSet1.getDouble(9);
+                    int animalRegNo = resultSet1.getInt(7);
+                    double partWeight = resultSet1.getDouble(2);
+                    int partRegNo = resultSet1.getInt(1);
+                    String partType = resultSet1.getString(3);
+                    AnimalPart animalPart = new AnimalPart(new Animal(species, animalWeight, animalRegNo), partWeight, partRegNo, partType);
+                    parts.add(animalPart);
+                }
+                tray.setParts(parts);
+                trays.add(tray);
+            }
+            return trays;
         }
     }
 }

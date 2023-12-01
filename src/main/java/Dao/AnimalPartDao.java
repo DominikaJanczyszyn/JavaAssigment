@@ -3,6 +3,7 @@ package Dao;
 import Domain.Animal;
 import Domain.AnimalPart;
 import Dto.AnimalPartCreationDTO;
+import java.util.ArrayList;
 
 import java.sql.*;
 
@@ -23,7 +24,7 @@ public class AnimalPartDao implements IAnimalPartDao
 
     private Connection getConnection() throws SQLException
     {
-        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhouse", "postgres", "xf31bhl9");
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhouse", "postgres", "sql3486");
     }
 
     @Override
@@ -58,6 +59,31 @@ public class AnimalPartDao implements IAnimalPartDao
                 animalPart = new AnimalPart(animal, partWeight, regNo, partType);
             }
             return animalPart;
+        }
+    }
+
+    @Override
+    public ArrayList<AnimalPart> getAllAnimalParts() throws SQLException {
+        try (Connection connection = getConnection())
+        {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM AnimalPart join Animal on AnimalPart.animal_reg_no = Animal.reg_no;");
+            ResultSet resultSet = statement.executeQuery();
+            ArrayList<AnimalPart> animalParts = new ArrayList<>();
+            AnimalPart animalPart = null;
+            if (resultSet.next())
+            {
+                int regNo = resultSet.getInt(1);
+                double partWeight = resultSet.getDouble(2);
+                String partType = resultSet.getString(3);
+                int animalRegNo = resultSet.getInt(4);
+                String species = resultSet.getString(8);
+                double animalWeight = resultSet.getDouble(9);
+
+                Animal animal = new Animal(species, animalWeight, animalRegNo);
+                animalPart = new AnimalPart(animal, partWeight, regNo, partType);
+                animalParts.add(animalPart);
+            }
+            return animalParts;
         }
     }
 }

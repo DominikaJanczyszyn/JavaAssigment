@@ -49,13 +49,13 @@ public class Station3Client {
 
     private void run()
     {
-        /*PackageCreationDto dto = new PackageCreationDto("leg", 10);
-        System.out.println(addPackage(dto));
+        //PackageCreationDto dto = new PackageCreationDto("leg", 10);
+        //System.out.println(addPackage(dto));
 
         addAnimalPartToPackage(1, 1);*/
 
-        //System.out.println(addHalfAnimal());
+       // System.out.println(addHalfAnimal());
 
-        addAnimalPartToHalfAnimal(2,1);
+        addAnimalPartToHalfAnimal(3,1);
     }
 }

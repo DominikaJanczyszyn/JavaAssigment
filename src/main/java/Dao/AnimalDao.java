@@ -18,7 +18,7 @@ public class AnimalDao implements IAnimalDao{
     }
     private Connection getConnection() throws SQLException
     {
-        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhouse", "postgres", "xf31bhl9");
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhouse", "postgres", "sql3486");
     }
 
     @Override
@@ -28,6 +28,7 @@ public class AnimalDao implements IAnimalDao{
             statement.setString(1, animal.getSpecies());
             statement.setDouble(2, animal.getWeight());
             statement.executeUpdate();
+
         }
     }
 

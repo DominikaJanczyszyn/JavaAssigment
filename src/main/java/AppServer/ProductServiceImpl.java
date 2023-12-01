@@ -6,7 +6,6 @@ import Dao.IProductDao;
 import Domain.Animal;
 import Domain.Package;
 import Dto.PackageCreationDto;
-import Logic.IProductLogic;
 import io.grpc.stub.StreamObserver;
 import product.*;
 

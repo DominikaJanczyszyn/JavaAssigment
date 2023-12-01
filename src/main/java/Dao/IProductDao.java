@@ -17,4 +17,6 @@ public interface IProductDao {
     HalfAnimal getHalfAnimalByRegNo(int regNo) throws SQLException;
     ArrayList<Animal> getAnimalsByProductRegNo(int productRegNo) throws SQLException;
     ArrayList<Product> getProductsByAnimalRegNo(int animalRegNo) throws SQLException;
+    ArrayList<Package> getAllPackages() throws SQLException;
+    ArrayList<HalfAnimal> getAllHalfAnimals() throws SQLException;
 }

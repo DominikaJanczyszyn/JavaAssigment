@@ -5,6 +5,7 @@ import Domain.HalfAnimal;
 import Domain.Package;
 import Domain.Product;
 import Dto.PackageCreationDto;
+import org.checkerframework.checker.units.qual.A;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class ProductDao implements IProductDao{
 
     private Connection getConnection() throws SQLException
     {
-        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhouse", "postgres", "xf31bhl9");
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres?currentSchema=slaughterhouse", "postgres", "sql3486");
     }
 
     @Override
@@ -150,6 +151,42 @@ public class ProductDao implements IProductDao{
                 products.add(halfAnimal);
             }
             return products;
+        }
+    }
+
+    @Override
+    public ArrayList<Package> getAllPackages() throws SQLException {
+        try (Connection connection = getConnection())
+        {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM package;");
+            ResultSet resultSet = statement.executeQuery();
+            ArrayList<Package> packages = new ArrayList<>();
+            Package p = null;
+            if(resultSet.next())
+            {
+                int regNo = resultSet.getInt("reg_no");
+                String animalPartType = resultSet.getString("animal_part_type");
+                int maxNrOfParts = resultSet.getInt("max_nr_of_parts");
+                p = new Package(regNo, animalPartType, maxNrOfParts);
+            }
+            packages.add(p);
+            return packages;
+        }
+    }
+
+    @Override
+    public ArrayList<HalfAnimal> getAllHalfAnimals() throws SQLException {
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM halfAnimal;");
+            ResultSet resultSet = statement.executeQuery();
+            ArrayList<HalfAnimal> halfAnimals = new ArrayList<>();
+            HalfAnimal halfAnimal = null;
+            if (resultSet.next()) {
+                int reg_no = resultSet.getInt("reg_no");
+                halfAnimal = new HalfAnimal(reg_no);
+                halfAnimals.add(halfAnimal);
+            }
+            return halfAnimals;
         }
     }
 }
